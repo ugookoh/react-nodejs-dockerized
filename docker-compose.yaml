@@ -1,0 +1,52 @@
+version: "3"
+services:
+  postgres: # this is the postres server. Do dockerfile is needed since we only need an image to make the server
+    image: "postgres:latest"
+    environment:
+      - POSTGRES_PASSWORD=postgres_password
+  redis: # redis server
+    image: "redis:latest"
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile.dev
+    restart: always
+    ports:
+      - "8080:80"
+  api: # express server api
+    build:
+      context: ./server
+      dockerfile: Dockerfile.dev
+    volumes:
+      # now our working directory would be the user/app place, however we make the first volume to tell
+      # us not to use access node modules from outside
+      # Now we are saaying that whenevever the ./server directory is changed, pushed the changes to the :/usr/app directory
+      - /usr/app/node_modules
+      - ./server:/usr/app
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - PGUSER=postgres
+      - PGHOST=postgres
+      - PGDATABASE=postgres
+      - PGPASSWORD=postgres_password
+      - PGPORT=5432
+  client: # client
+    environment:
+      - WDS_SOCKET_PORT=0
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./client
+    volumes:
+      - /usr/app/node_modules
+      - ./client:/usr/app
+  worker: # Worker service
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./worker
+    volumes:
+      - /usr/app/node_modules
+      - ./worker:/usr/app
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
