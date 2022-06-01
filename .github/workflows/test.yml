@@ -1,4 +1,4 @@
-name: Testing-My-React-App
+name: Running tests
 on: push
 
 jobs:
