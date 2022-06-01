@@ -1,4 +1,4 @@
-name: Deploy-To-AWS-Beanstalk
+name: Deploy Docker Hub
 # Only activate on a push to main branch
 on:
   push:
@@ -16,13 +16,15 @@ jobs:
         run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build docker image for all items
-      - run: docker build -t ugo21/multi-client ./client
-      - run: docker build -t ugo21/multi-nginx ./nginx
-      - run: docker build -t ugo21/multi-server ./server
-      - run: docker build -t ugo21/multi-worker ./worker
+        run: |
+          docker build -t ugo21/multi-client ./client
+          docker build -t ugo21/multi-nginx ./nginx
+          docker build -t ugo21/multi-server ./server
+           docker build -t ugo21/multi-worker ./worker
 
       - name: Push all the docker images to docker hub
-      - run: docker push ugo21/multi-client
-      - run: docker push ugo21/multi-nginx
-      - run: docker push ugo21/multi-server
-      - run: docker push ugo21/multi-worker
+      - run: |
+          docker push ugo21/multi-client
+          docker push ugo21/multi-nginx
+          docker push ugo21/multi-server
+          docker push ugo21/multi-worker
