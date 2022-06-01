@@ -1,0 +1,22 @@
+name: Running tests
+on: push
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Log into docker with my account
+        run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build a docker test image for client react-app
+        run: docker build -t ugo21/my-react-test -f ./client/Dockerfile.dev ./client
+      - name: Run docker test for client react app
+        run: docker run -e CI=true ugo21/my-react-test npm run test
+
+      - name: Build a docker test image for worker folder
+        run: docker build -t ugo21/my-worker-test -f ./worker/Dockerfile.dev ./worker
+      - name: Run docker test for worker
+        run: docker run -e CI=true ugo21/my-worker-test npx jest
+
+        # TESTS HAVE BEEN RUN WITH DOCKER IMAGES, WE ARE GOOD!

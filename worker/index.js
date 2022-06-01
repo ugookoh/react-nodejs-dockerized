@@ -5,7 +5,7 @@
 
 const keys = require('./keys');
 const redis = require('redis');
-
+const { fib } = require('./functions')
 const redisClient = redis.createClient({
     socket: {
         host: keys.redisHost,
@@ -14,14 +14,6 @@ const redisClient = redis.createClient({
     }
 });
 
-
-
-function fib(index) {
-    if (index == 0) return 0;
-    if (index == 1) return 1;
-
-    return fib(index - 2) + fib(index - 1)
-}
 
 const sub = redisClient.duplicate(); // The duplicate client which listens for events
 // You must create a redis duplicate because when a connection is used to publish and subscribe to stuff

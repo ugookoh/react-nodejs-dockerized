@@ -7,22 +7,33 @@ const Fib = () => {
     const [index, setIndex] = useState('');
 
     const fetchValues = async () => {
-        const values = await axios.get('/api/values/current');
-        setValues(values.data)
+        try {
+            const values = await axios.get('/api/values/current');
+            setValues(values.data)
+        } catch (err) {
+            console.log(err.message)
+        }
     };
     const fetchIndexes = async () => {
-        const indexesRes = await (axios.get('/api/values/all'))
-        setSeenIndexes(indexesRes.data)
+        try {
+            const indexesRes = await (axios.get('/api/values/all'))
+            setSeenIndexes(indexesRes.data)
+        } catch (err) {
+            console.log(err.message)
+        }
     };
     const handleSubmit = async (event) => {
         event.preventDefault();
-
-        await axios.post('/api/values', {
-            index: index
-        });
-        fetchIndexes();
-        fetchValues();
-        setIndex('');
+        try {
+            await axios.post('/api/values', {
+                index: index
+            });
+            fetchIndexes();
+            fetchValues();
+            setIndex('');
+        } catch (err) {
+            console.log(err.message)
+        }
     }
     useEffect(() => {
         fetchIndexes();
