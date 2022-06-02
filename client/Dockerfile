@@ -1,11 +1,14 @@
-FROM node:16-alpine
-
+# PHASE 1
+FROM node:16-alpine as builder
 WORKDIR /usr/app
-
 COPY ./package.json ./
-
-RUN npm i
-
+RUN npm install
 COPY ./ ./
+RUN npm run build
 
-CMD ["npm","run","start"]
+# PHASE 2
+FROM nginx
+EXPOSE 3000
+# Here we copy the new deault nginx configuration
+COPY ./nginx/default.conf /etc/ngnix/conf.d/default.conf
+COPY --from=builder /usr/app/build /usr/share/nginx/html
