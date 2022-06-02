@@ -30,7 +30,7 @@
       "memory": 128,
       "portMappings": [
         {
-          "hostPort": 80,
+          "protocol": "tcp",
           "containerPort": 80
         }
       ],
